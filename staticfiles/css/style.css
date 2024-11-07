@@ -1,0 +1,37 @@
+/* Style for the landing page */
+.landing-container {
+    text-align: center;
+    margin-top: 50px;
+}
+
+.landing-container h1 {
+    font-size: 3em;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.landing-container p {
+    font-size: 1.2em;
+    color: #555;
+    margin-bottom: 30px;
+}
+
+.landing-links a {
+    font-size: 1.2em;
+    text-decoration: none;
+    padding: 10px 20px;
+    margin: 0 10px;
+    border-radius: 5px;
+}
+
+.landing-links .btn {
+    background-color: #003366; /* Dark blue */
+    color: rgb(255, 255, 255);
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.landing-links .btn:hover {
+    background-color: #002244; /* Darker blue for hover effect */
+}

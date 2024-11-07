@@ -1,11 +1,42 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inventory System</title>
+
+    <!-- Load static files -->
+    {% load static %}
+
+    <!-- Link to your CSS file -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-    <h1>Welcome to the Inventory System</h1>
-    <a href="{% url 'login' %}">Login</a> or
-    <a href="{% url 'signup' %}">Create an Account</a>
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            
+        </div>
+    </header>
+
+    <!-- Main content section -->
+    <main>
+        <div class="landing-container">
+            <h1>Welcome to the Inventory System</h1>
+            <p>Your go-to solution for managing your inventory. Start by logging in or signing up!</p>
+
+            <!-- Buttons for Login and Sign Up -->
+            <div class="landing-links">
+                <a href="{% url 'login' %}" class="btn">Login</a>
+                <a href="{% url 'signup' %}" class="btn">Sign Up</a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 Inventory System</p>
+    </footer>
 </body>
 </html>
+

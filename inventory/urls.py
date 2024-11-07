@@ -1,6 +1,10 @@
 from django.urls import path
 from inventory import views
 from django.contrib.auth import views as auth_views
+from django.conf.urls.static import static
+from django.conf import settings
+
+
 
 urlpatterns = [
     path('', views.landing_page, name='landing'),
@@ -12,3 +16,5 @@ urlpatterns = [
     path('remove_product/', views.remove_product, name='remove_product'),
     path('view_products/', views.view_products, name='view_products'),
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
