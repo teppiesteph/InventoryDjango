@@ -25,7 +25,7 @@
 }
 
 .landing-links .btn {
-    background-color: #003366 !important; /* Dark blue */
+    background-color: #003366 !important; 
     color: rgb(255, 255, 255);
     border: none;
     cursor: pointer;
@@ -33,5 +33,5 @@
 }
 
 .landing-links .btn:hover {
-    background-color: #002244 !important; /* Darker blue for hover effect */
+    background-color: #002244 !important; 
 }

@@ -3,6 +3,8 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from .models import Product
 import json
+def login_view(request):
+    return render(request, 'inventory/login.html')
 
 def landing_page(request):
     print("Landing page view accessed")  # Add this line for debugging
