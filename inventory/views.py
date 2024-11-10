@@ -1,32 +1,62 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth import login
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.models import User
 from .models import Product
+from .forms import CustomSignupForm  
+from django.contrib.auth.models import Group
 import json
-def login_view(request):
-    return render(request, 'inventory/login.html')
 
+# Helper functions to check user roles
+def is_manager(user):
+    return user.groups.filter(name='manager').exists()
+
+def is_employee(user):
+    return user.groups.filter(name='employee').exists()
+
+# Login view
+def login_view(request):
+    form = AuthenticationForm(request, data=request.POST or None)
+    if request.method == 'POST' and form.is_valid():
+        login(request, form.get_user())
+        return redirect('dashboard')
+    return render(request, 'inventory/login.html', {'form': form})
+
+# Landing page view
 def landing_page(request):
-    print("Landing page view accessed")  # Add this line for debugging
+    print("Landing page view accessed")  # Debugging line
     return render(request, 'inventory/landing_page.html')
-# Signup view
+
+# Signup view with role selection
 def signup(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = CustomSignupForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('login')
+            user = form.save(commit=False)
+            role = form.cleaned_data.get('role')
+            user.save()
+
+            # Assign user to a group based on selected role
+            group_name = 'manager' if role == 'manager' else 'employee'
+            group, created = Group.objects.get_or_create(name=group_name)
+            user.groups.add(group)
+
+            # Log the user in
+            login(request, user)
+            return redirect('dashboard')
     else:
-        form = UserCreationForm()
+        form = CustomSignupForm()
     return render(request, 'inventory/signup.html', {'form': form})
 
-# Dashboard view
+# Dashboard view 
 @login_required
 def dashboard(request):
     return render(request, 'inventory/dashboard.html')
 
-# Add product view
+# Add product view (restricted to managers only)
 @login_required
+@user_passes_test(is_manager, login_url='dashboard')
 def add_product(request):
     if request.method == 'POST':
         name = request.POST['name']
@@ -52,8 +82,9 @@ def add_product(request):
 
     return render(request, 'inventory/add_product.html')
 
-# Remove product view
+# Remove product view (restricted to managers only)
 @login_required
+@user_passes_test(is_manager, login_url='dashboard')
 def remove_product(request):
     if request.method == 'POST':
         product_id = request.POST['product_id']
@@ -71,9 +102,8 @@ def remove_product(request):
 
     return render(request, 'inventory/remove_product.html')
 
-# View products view
+# View products view 
 @login_required
 def view_products(request):
     products = Product.objects.all()
     return render(request, 'inventory/view_products.html', {'products': products})
-
