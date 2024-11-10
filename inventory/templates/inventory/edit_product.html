@@ -1,0 +1,41 @@
+<!-- edit_product.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Product</title>
+</head>
+<body>
+    <h1>Edit Product</h1>
+
+    <a href="{% url 'view_products' %}">Back to Products</a>
+
+    <form method="POST">
+        {% csrf_token %}
+        
+        <!-- Hidden field to store product_id -->
+        <input type="hidden" name="product_id" value="{{ product.id }}">
+
+        <div>
+            <label for="name">Product Name:</label>
+            <input type="text" id="name" name="name" value="{{ product.name }}" required>
+        </div>
+        <div>
+            <label for="description">Description:</label>
+            <textarea id="description" name="description" required>{{ product.description }}</textarea>
+        </div>
+        <div>
+            <label for="amount">Amount:</label>
+            <input type="number" id="amount" name="amount" value="{{ product.amount }}" required>
+        </div>
+        <div>
+            <label for="location">Location:</label>
+            <input type="text" id="location" name="location" value="{{ product.location }}" required>
+        </div>
+        <div>
+            <button type="submit">Save Changes</button>
+        </div>
+    </form>
+</body>
+</html>

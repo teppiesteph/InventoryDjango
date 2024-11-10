@@ -1,1 +1,1 @@
-[{"id": 1, "name": "grass", "product_id": "1234", "description": "grass", "amount": 1, "location": "raleigh"}]
+[{"id": 4, "name": "Sample Product", "product_id": "", "description": "This is a test product", "amount": 93, "location": "Aisle 1"}, {"id": 5, "name": "grass", "product_id": "2", "description": "2222", "amount": 222, "location": "2222"}]

@@ -8,7 +8,7 @@
 <body>
     <h1>Product List</h1>
     <a href="{% url 'dashboard' %}">Back to Dashboard</a>
-    
+
     <table border="1">
         <thead>
             <tr>
@@ -17,6 +17,7 @@
                 <th>Description</th>
                 <th>Amount</th>
                 <th>Location</th>
+                <th>Actions</th>  <!-- Column for actions (edit link) -->
             </tr>
         </thead>
         <tbody>
@@ -27,10 +28,16 @@
                 <td>{{ product.description }}</td>
                 <td>{{ product.amount }}</td>
                 <td>{{ product.location }}</td>
+                <td>
+                    <!-- Check if the user is a manager -->
+                    {% if is_manager %}
+                        <a href="{% url 'edit_product' product.id %}">Edit</a>  <!-- Link to edit the product -->
+                    {% endif %}
+                </td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan="5">No products available.</td>
+                <td colspan="6">No products available.</td>  <!-- Adjusted colspan to account for the new Actions column -->
             </tr>
             {% endfor %}
         </tbody>

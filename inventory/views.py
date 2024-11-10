@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import login
 from django.contrib.auth.forms import AuthenticationForm
@@ -101,9 +101,28 @@ def remove_product(request):
             return render(request, 'inventory/remove_product.html', {'error': 'Product not found.'})
 
     return render(request, 'inventory/remove_product.html')
+# Edit products view
+@login_required
+@user_passes_test(is_manager, login_url='dashoard')
+def edit_product(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
 
+    if request.method == 'POST':
+        product.name = request.POST['name']
+        
+        product.description = request.POST['description']
+        product.amount = request.POST['amount']
+        product.location = request.POST['location']
+
+        product.save()
+        return redirect('dashboard')
+    
+    return render(request, 'inventory/edit_product.html', {'product': product})
 # View products view 
+
+
 @login_required
 def view_products(request):
+    is_manager = request.user.groups.filter(name='manager').exists()
     products = Product.objects.all()
-    return render(request, 'inventory/view_products.html', {'products': products})
+    return render(request, 'inventory/view_products.html', {'products': products, 'is_manager': is_manager})
