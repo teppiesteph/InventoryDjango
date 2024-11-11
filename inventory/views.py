@@ -2,10 +2,9 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth import login
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.models import User
-from .models import Product
-from .forms import CustomSignupForm  
 from django.contrib.auth.models import Group
+from .models import Product
+from .forms import CustomSignupForm
 import json
 
 # Helper functions to check user roles
@@ -28,7 +27,7 @@ def landing_page(request):
     print("Landing page view accessed")  # Debugging line
     return render(request, 'inventory/landing_page.html')
 
-# Signup view with role selection
+# Signup view 
 def signup(request):
     if request.method == 'POST':
         form = CustomSignupForm(request.POST)
@@ -49,15 +48,20 @@ def signup(request):
         form = CustomSignupForm()
     return render(request, 'inventory/signup.html', {'form': form})
 
-# Dashboard view 
+# Dashboard view
 @login_required
 def dashboard(request):
-    return render(request, 'inventory/dashboard.html')
+    username = request.user.username
+    role = 'Manager' if is_manager(request.user) else 'Employee'
+    return render(request, 'inventory/dashboard.html', {'username': username, 'role': role})
 
-# Add product view (restricted to managers only)
+# Add product view 
 @login_required
 @user_passes_test(is_manager, login_url='dashboard')
 def add_product(request):
+    username = request.user.username
+    role = 'Manager' if is_manager(request.user) else 'Employee'
+
     if request.method == 'POST':
         name = request.POST['name']
         product_id = request.POST['product_id']
@@ -71,7 +75,7 @@ def add_product(request):
 
         # Log the addition
         with open('transactions.log', 'a') as log_file:
-            log_file.write(f"Product added: {product.name}, by {request.user.username}\n")
+            log_file.write(f"Product added: {product.name}, by {username}\n")
 
         # Save to JSON
         products = list(Product.objects.values())
@@ -80,12 +84,15 @@ def add_product(request):
 
         return redirect('dashboard')
 
-    return render(request, 'inventory/add_product.html')
+    return render(request, 'inventory/add_product.html', {'username': username, 'role': role})
 
-# Remove product view (restricted to managers only)
+# Remove product view
 @login_required
 @user_passes_test(is_manager, login_url='dashboard')
 def remove_product(request):
+    username = request.user.username
+    role = 'Manager' if is_manager(request.user) else 'Employee'
+
     if request.method == 'POST':
         product_id = request.POST['product_id']
         try:
@@ -94,35 +101,51 @@ def remove_product(request):
 
             # Log the removal
             with open('transactions.log', 'a') as log_file:
-                log_file.write(f"Product removed: {product_id}, by {request.user.username}\n")
+                log_file.write(f"Product removed: {product_id}, by {username}\n")
 
             return redirect('dashboard')
         except Product.DoesNotExist:
-            return render(request, 'inventory/remove_product.html', {'error': 'Product not found.'})
+            return render(request, 'inventory/remove_product.html', {'error': 'Product not found.', 'username': username, 'role': role})
 
-    return render(request, 'inventory/remove_product.html')
-# Edit products view
+    return render(request, 'inventory/remove_product.html', {'username': username, 'role': role})
+
+# Edit product view 
 @login_required
-@user_passes_test(is_manager, login_url='dashoard')
+@user_passes_test(is_manager, login_url='dashboard')
 def edit_product(request, product_id):
     product = get_object_or_404(Product, id=product_id)
+    username = request.user.username
+    role = 'Manager' if is_manager(request.user) else 'Employee'
 
     if request.method == 'POST':
         product.name = request.POST['name']
-        
         product.description = request.POST['description']
         product.amount = request.POST['amount']
         product.location = request.POST['location']
-
         product.save()
         return redirect('dashboard')
     
-    return render(request, 'inventory/edit_product.html', {'product': product})
+    return render(request, 'inventory/edit_product.html', {'product': product, 'username': username, 'role': role})
+
 # View products view 
-
-
 @login_required
 def view_products(request):
-    is_manager = request.user.groups.filter(name='manager').exists()
+    username = request.user.username
+    role = 'Manager' if is_manager(request.user) else 'Employee'
+    is_manager_user = request.user.groups.filter(name='manager').exists()
     products = Product.objects.all()
-    return render(request, 'inventory/view_products.html', {'products': products, 'is_manager': is_manager})
+    return render(request, 'inventory/view_products.html', {
+        'products': products, 
+        'username': username, 
+        'role': role,
+        'is_manager': is_manager_user
+    })
+@login_required
+def search_products(request):
+    query = request.GET.get('query', '')  # Get search query from the URL
+    products = Product.objects.filter(name__icontains=query) if query else Product.objects.all()
+
+    return render(request, 'inventory/search_products.html', {
+        'products': products,
+        'query': query,
+    })

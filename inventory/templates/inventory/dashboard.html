@@ -1,5 +1,12 @@
 <h1>Inventory Dashboard</h1>
+{% if user.is_authenticated %}
+<div class="user-info">
+    <p>Signed in as: {{ user.username }}</p>
+    <p>Role: {{ user.groups.first.name }}</p>  
+{% endif %}
+
 <a href="{% url 'add_product' %}">Add Product</a>
 <a href="{% url 'remove_product' %}">Remove Product</a>
 <a href="{% url 'view_products' %}">View Products</a>
+<a href="{% url 'search_products' %}">Search Product</a>
 <a href="{% url 'logout' %}">Logout</a>

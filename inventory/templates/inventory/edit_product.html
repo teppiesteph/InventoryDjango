@@ -8,6 +8,13 @@
 </head>
 <body>
     <h1>Edit Product</h1>
+    {% if user.is_authenticated %}
+    <div class="user-info">
+        <p>Signed in as: {{ user.username }}</p>
+        <p>Role: {{ user.groups.first.name }}</p>  <!-- This will work since the user is in only one group -->
+    </div>
+    {% endif %}
+
 
     <a href="{% url 'view_products' %}">Back to Products</a>
 

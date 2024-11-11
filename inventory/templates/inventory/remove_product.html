@@ -7,6 +7,13 @@
 </head>
 <body>
     <h1>Remove Product</h1>
+    {% if user.is_authenticated %}
+    <div class="user-info">
+        <p>Signed in as: {{ user.username }}</p>
+        <p>Role: {{ user.groups.first.name }}</p> 
+    </div>
+    {% endif %}
+
     <a href="{% url 'dashboard' %}">Back to Dashboard</a>
 
     {% if error %}
