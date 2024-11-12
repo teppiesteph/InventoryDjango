@@ -124,6 +124,15 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",  # Ensure the path is correct
 ]
 
+# Database creation
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3', 
+    }
+}
+
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Default primary key field type
