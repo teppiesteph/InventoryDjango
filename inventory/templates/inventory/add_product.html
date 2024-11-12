@@ -1,4 +1,47 @@
+<style>
+    h2{
+        font-size: 40px;
+        font-style: italic;
+        color: white;
+        font-family: Arial Black;
+        background-color: #212f3c;
+        
+    }
+
+    form{
+        font-size: 15px;
+        font-weight: 900;
+    }
+    ul1{
+        font-family: Arial Black;
+        font-size: 17px;
+    }
+    
+
+
+</style>
+
+
 <h2>Add Product</h2>
+
+{% if user.is_authenticated %}
+    <div class="user-info">
+        <p><strong>Signed in as:</strong> {{ user.username }}</p>
+        <p><strong>Role:</strong> {{ user.groups.first.name }}</p>  
+    </div>
+{% endif %}
+<ul1>
+    <li>Enter Product Details: Fill in each required field, starting with the product name.
+    <li>Product ID: Provide a unique identifier, like a SKU or code, to distinguish the item.</li>
+    <li>Description: Add a brief description to give more information about the product.</li>
+    <li>Amount: Specify the quantity available.</li>
+    <li>Location: Indicate where the product is stored (e.g., warehouse or store section).</li>
+    <li>Submit: Click the "Add Product" button to save the entry.</li></li>
+</ul>  
+
+
+<a href="{% url 'dashboard' %}" class="btn-back">Back to Dashboard</a>
+
 <form method="post">
     {% csrf_token %}
     <label for="name">Product Name:</label>
