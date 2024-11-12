@@ -1,0 +1,32 @@
+<h2>Search Products</h2>
+
+{% if user.is_authenticated %}
+    <div class="user-info">
+        <p>Signed in as: {{ user.username }}</p>
+        <p>Role: {{ user.groups.first.name }}</p>  
+    </div>
+{% endif %}
+<a href="{% url 'dashboard' %}" class="btn-back">Back to Dashboard</a>
+
+<!-- Search Form -->
+<form method="get" action="{% url 'search_products' %}">
+    <label for="query">Search by Product Name:</label>
+    <input type="text" name="query" value="{{ query }}" placeholder="Enter product name">
+    <button type="submit">Search</button>
+</form>
+
+<!-- Display Search Results -->
+{% if query %}
+    {% if products %}
+        <h3>Search Results:</h3>
+        <ul>
+            {% for product in products %}
+                <li>{{ product.name }} - {{ product.description }} ({{ product.amount }} available)</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No products found matching "{{ query }}".</p>
+    {% endif %}
+{% else %}
+    <p>Please enter a product name to search.</p>
+{% endif %}

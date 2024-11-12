@@ -1,4 +1,14 @@
 <h2>Add Product</h2>
+
+{% if user.is_authenticated %}
+    <div class="user-info">
+        <p>Signed in as: {{ user.username }}</p>
+        <p>Role: {{ user.groups.first.name }}</p>  
+    </div>
+{% endif %}
+
+<a href="{% url 'dashboard' %}" class="btn-back">Back to Dashboard</a>
+
 <form method="post">
     {% csrf_token %}
     <label for="name">Product Name:</label>
