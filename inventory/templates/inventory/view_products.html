@@ -4,9 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Products</title>
+    <style>
+        table{
+            margin: auto;
+        }
+        body{
+            align-items: center;
+            display: flex;
+            justify-content: center;
+            background-position-x: center; 
+            background-color: #00336c;
+            height: 50vh;
+        }
+        h1{
+            text-align: center;
+        }
+        .food{
+            text-align: center;
+            width: 100%;
+            max-width: 800px;
+            background-color: #fff;
+            padding: 20px;
+            margin-top: auto;
+            border-radius: 8px;
+            
+        }
+        a{
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
+    <div class = "food">
     <h1>Product List</h1>
+    <!-- Display username and role -->
+    <div class="user-info">
+        <p><strong>Signed in as:</strong> {{ username }}</p>
+        <p><strong>Role:</strong> {{ role }}</p>
+    </div>
     <a href="{% url 'dashboard' %}">Back to Dashboard</a>
     
     <table border="1">
@@ -17,6 +52,7 @@
                 <th>Description</th>
                 <th>Amount</th>
                 <th>Location</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -27,13 +63,19 @@
                 <td>{{ product.description }}</td>
                 <td>{{ product.amount }}</td>
                 <td>{{ product.location }}</td>
+                <td>
+                    {% if is_manager %}
+                        <a href="{% url 'edit_product' product.id %}">Edit</a>
+                    {% endif %}
+                </td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan="5">No products available.</td>
+                <td colspan="6">No products available.</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+    </div>
 </body>
 </html>
