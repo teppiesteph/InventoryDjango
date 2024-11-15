@@ -17,12 +17,7 @@
         </div>
 
         
-        {% if user.is_authenticated %}
-        <div class="user-info">
-            <p>Signed in as: {{ user.username }}</p>
-            <p>Role: {{ user.groups.first.name }}</p>  
-        </div>
-        {% endif %}
+        
     </header>
 
     <main>
