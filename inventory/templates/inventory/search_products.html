@@ -1,32 +1,89 @@
-<h2>Search Products</h2>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Products</title>
+    <style>
+        h1, h2 {
+            color: white;
+            background-color: #00336c;
+            font-size: 40px;
+            font-style: italic;
+            font-family: Arial Black;
+        }
+        a {
+            font-size: 17px;
+            font-weight: bold;
+        }
+        .user-info {
+            font-size: 16px;
+            margin-top: 20px;
+        }
+        form {
+            font-size: 15px;
+            font-weight: 900;
+            font-family: Arial Black;
+        }
+        input[type="text"] {
+            font-size: 15px;
+            padding: 5px;
+            margin: 10px 0;
+        }
+        button {
+            font-size: 15px;
+            padding: 5px 10px;
+            background-color: #00336c;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #002a4d;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            padding: 10px;
+            border-bottom: 1px solid #00336c;
+        }
+    </style>
+</head>
+<body>
+    <h2>Search Products</h2>
 
-{% if user.is_authenticated %}
+    {% if user.is_authenticated %}
     <div class="user-info">
-        <p>Signed in as: {{ user.username }}</p>
-        <p>Role: {{ user.groups.first.name }}</p>  
+        <p><strong>Signed in as: {{ user.username }}</strong></p>
+        <p><strong>Role: {{ user.groups.first.name }}</strong></p>  
     </div>
-{% endif %}
-<a href="{% url 'dashboard' %}" class="btn-back">Back to Dashboard</a>
-
-<!-- Search Form -->
-<form method="get" action="{% url 'search_products' %}">
-    <label for="query">Search by Product Name:</label>
-    <input type="text" name="query" value="{{ query }}" placeholder="Enter product name">
-    <button type="submit">Search</button>
-</form>
-
-<!-- Display Search Results -->
-{% if query %}
-    {% if products %}
-        <h3>Search Results:</h3>
-        <ul>
-            {% for product in products %}
-                <li>{{ product.name }} - {{ product.description }} ({{ product.amount }} available)</li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No products found matching "{{ query }}".</p>
     {% endif %}
-{% else %}
-    <p>Please enter a product name to search.</p>
-{% endif %}
+
+    <a href="{% url 'dashboard' %}">Back to Dashboard</a>
+
+    <!-- Search Form -->
+    <form method="get" action="{% url 'search_products' %}">
+        <label for="query">Search by Product Name:</label>
+        <input type="text" name="query" value="{{ query }}" placeholder="Enter product name">
+        <button type="submit">Search</button>
+    </form>
+
+    <!-- Display Search Results -->
+    {% if query %}
+        {% if products %}
+            <h3>Search Results:</h3>
+            <ul>
+                {% for product in products %}
+                    <li>{{ product.name }} - {{ product.description }} ({{ product.amount }} available)</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No products found matching "{{ query }}".</p>
+        {% endif %}
+    {% else %}
+        <p>Please enter a product name to search.</p>
+    {% endif %}
+</body>
+</html>

@@ -4,19 +4,53 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Products</title>
+    <style>
+        h1 {
+            color: white;
+            background-color: #00336c;
+            font-size: 40px;
+            font-style: italic;
+            font-family: Arial Black;
+        }
+        a {
+            font-size: 17px;
+            font-weight: bold;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #00336c;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        .user-info {
+            font-size: 16px;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
     <h1>Product List</h1>
 
-    <!-- Display username and role -->
+    {% if user.is_authenticated %}
     <div class="user-info">
-        <p>Signed in as: {{ username }}</p>
-        <p>Role: {{ role }}</p>
+        <p><strong>Signed in as: {{ user.username }}</strong></p>
+        <p><strong>Role: {{ user.groups.first.name }}</strong></p>  
     </div>
+    {% endif %}
 
     <a href="{% url 'dashboard' %}">Back to Dashboard</a>
 
-    <table border="1">
+    {% if error %}
+    <p style="color: red;">{{ error }}</p>
+    {% endif %}
+
+    <table>
         <thead>
             <tr>
                 <th>Product Name</th>

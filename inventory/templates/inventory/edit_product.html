@@ -1,20 +1,40 @@
-<!-- edit_product.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Product</title>
+    <style>
+        h1 {
+            color: white;
+            background-color: #00336c;
+            font-size: 40px;
+            font-style: italic;
+            font-family: Arial Black;
+        }
+        a {
+            font-size: 17px;
+            font-weight: bold;
+        }
+        form {
+            font-size: 15px;
+            font-weight: 900;
+            font-family: Arial Black;
+        }
+        .user-info {
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
     <h1>Edit Product</h1>
+
     {% if user.is_authenticated %}
     <div class="user-info">
-        <p>Signed in as: {{ user.username }}</p>
-        <p>Role: {{ user.groups.first.name }}</p>  <!-- This will work since the user is in only one group -->
+        <p><strong>Signed in as: {{ user.username }}</strong></p>
+        <p><strong>Role: {{ user.groups.first.name }}</strong></p>  
     </div>
     {% endif %}
-
 
     <a href="{% url 'view_products' %}">Back to Products</a>
 
