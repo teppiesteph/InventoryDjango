@@ -76,3 +76,56 @@ class TestUrls(TestCase):
     def test_dashboard_url(self):
         url = reverse('dashboard')
         self.assertEqual(resolve(url).func, views.dashboard)
+
+# Non Functional Tests
+# Security Tests
+class SecurityTests(TestCase):
+    def test_login_required(self):
+        url = reverse('add_product')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 302)
+
+    def test_logout_required(self):
+        url = reverse('logout')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 302)
+
+    def test_signup_required(self):
+        url = reverse('signup')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+
+    
+# usability tests
+class UsabilityTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(username='testuser', password='12345')
+        manager_group = Group.objects.create(name='manager')
+        self.user.groups.add(manager_group)
+        self.client.login(username='testuser', password='12345')
+
+        self.product = Product.objects.create(
+            name="Test Product",
+            product_id="12345",
+            description="A sample product",
+            amount=100,
+            location="Warehouse 1"
+        )
+
+    def test_add_product_page(self):
+        url = reverse('add_product')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'inventory/add_product.html')
+
+    def test_edit_product_page(self):
+        url = reverse('edit_product', args=[1])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'inventory/edit_product.html')
+
+    def test_remove_product_page(self):
+        url = reverse('remove_product')
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'inventory/remove_product.html')
