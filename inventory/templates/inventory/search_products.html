@@ -1,32 +1,78 @@
-<h2>Search Products</h2>
+{% extends 'inventory/landing_page.html' %}
 
-{% if user.is_authenticated %}
-    <div class="user-info">
-        <p>Signed in as: {{ user.username }}</p>
-        <p>Role: {{ user.groups.first.name }}</p>  
+{% block content %}
+<div class="container shadow-box wide-container">
+    <!-- Page Header -->
+    <div class="page-header text-center">
+        <h1>Search Products</h1>
+        <p>Find products by name in your inventory.</p>
     </div>
-{% endif %}
-<a href="{% url 'dashboard' %}" class="btn-back">Back to Dashboard</a>
 
-<!-- Search Form -->
-<form method="get" action="{% url 'search_products' %}">
-    <label for="query">Search by Product Name:</label>
-    <input type="text" name="query" value="{{ query }}" placeholder="Enter product name">
-    <button type="submit">Search</button>
-</form>
+    <!-- User Info -->
+    <div class="user-info text-center">
+        <p><strong>Signed in as:</strong> {{ user.username }}</p>
+        <p><strong>Role:</strong> {{ user.groups.first.name }}</p>
+    </div>
 
-<!-- Display Search Results -->
-{% if query %}
-    {% if products %}
-        <h3>Search Results:</h3>
-        <ul>
-            {% for product in products %}
-                <li>{{ product.name }} - {{ product.description }} ({{ product.amount }} available)</li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>No products found matching "{{ query }}".</p>
+    <!-- Search Form -->
+    <form method="get" action="{% url 'search_products' %}" class="form-container text-center">
+        <div class="form-group">
+            <label for="query" class="form-label">Search by Product Name:</label>
+            <input
+                type="text"
+                id="query"
+                name="query"
+                placeholder="Enter product name"
+                class="form-input"
+                value="{{ query|default:'' }}"
+                required
+            />
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Search</button>
+            <a href="{% url 'dashboard' %}" class="btn btn-primary">Back to Dashboard</a>
+        </div>
+    </form>
+
+    <!-- Search Results -->
+    {% if query %}
+    <div class="table-container">
+        <h2 class="text-center">Search Results</h2>
+        {% if products %}
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th class="text-center">Product Name</th>
+                    <th class="text-center">Product ID</th>
+                    <th class="text-center">Description</th>
+                    <th class="text-center">Amount</th>
+                    <th class="text-center">Location</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr>
+                    <td class="text-center">{{ product.name }}</td>
+                    <td class="text-center">{{ product.product_id }}</td>
+                    <td class="text-center">{{ product.description }}</td>
+                    <td class="text-center">{{ product.amount }}</td>
+                    <td class="text-center">{{ product.location }}</td>
+                    <td class="text-center">
+                        <a href="{% url 'edit_product' product.id %}" class="btn btn-secondary btn-small">Edit</a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center">No products found matching your search.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="text-center">No products found matching your search.</p>
+        {% endif %}
+    </div>
     {% endif %}
-{% else %}
-    <p>Please enter a product name to search.</p>
-{% endif %}
+</div>
+{% endblock %}

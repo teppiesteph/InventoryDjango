@@ -1,9 +1,49 @@
-<h2>Create an Account</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}  
+{% extends 'inventory/landing_page.html' %}
 
-    <button type="submit">Sign Up</button>
-</form>
+{% block content %}
+<div class="signup-container shadow-box">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert-error">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+    <div class="text-center">
+        <h2>Create an Account</h2>
+        <p>Join us to start managing your inventory efficiently!</p>
+    </div>
 
-<a href="{% url 'login' %}">Back to Login</a>
+    <form method="post" class="form-container">
+        {% csrf_token %}
+        <!-- Username Input -->
+        <div class="form-group text-center">
+            <label for="username" class="form-label">Username:</label>
+            <input type="text" id="username" name="username" class="form-input" required>
+        </div>
+        <!-- Password Input -->
+        <div class="form-group text-center">
+            <label for="password1" class="form-label">Password:</label>
+            <input type="password" id="password1" name="password1" class="form-input" required>
+        </div>
+        <!-- Role Selection -->
+        <div class="form-group text-center">
+            <label for="role" class="form-label">Role:</label>
+            <select id="role" name="role" class="form-input" required>
+                <option value="">Select your role</option>
+                <option value="manager">Manager</option>
+                <option value="employee">Employee</option>
+            </select>
+        </div>
+        <!-- Submit Button -->
+        <div class="form-actions text-center">
+            <button type="submit" class="btn btn-primary">Sign Up</button>
+        </div>
+    </form>
+
+    <!-- Link to Login Page -->
+    <div class="additional-links text-center">
+        <p>Already have an account? <a href="{% url 'login' %}">Back to Login</a></p>
+    </div>
+</div>
+{% endblock %}

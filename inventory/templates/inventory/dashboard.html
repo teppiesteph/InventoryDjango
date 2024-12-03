@@ -1,12 +1,31 @@
-<h1>Inventory Dashboard</h1>
-{% if user.is_authenticated %}
-<div class="user-info">
-    <p>Signed in as: {{ user.username }}</p>
-    <p>Role: {{ user.groups.first.name }}</p>  
-{% endif %}
+{% extends 'inventory/landing_page.html' %}
 
-<a href="{% url 'add_product' %}">Add Product</a>
-<a href="{% url 'remove_product' %}">Remove Product</a>
-<a href="{% url 'view_products' %}">View Products</a>
-<a href="{% url 'search_products' %}">Search Product</a>
-<a href="{% url 'logout' %}">Logout</a>
+{% block content %}
+<div class="dashboard-container shadow-box">
+    <div class="text-center">
+        <h1>Inventory Dashboard</h1>
+    </div>
+
+    {% if user.is_authenticated %}
+    <div class="user-info text-center">
+        <p><strong>Signed in as:</strong> {{ user.username }}</p>
+        <p><strong>Role:</strong> {{ user.groups.first.name }}</p>
+    </div>
+    {% endif %}
+
+    <div class="dashboard-actions text-center">
+        <a href="{% url 'add_product' %}" class="btn btn-primary">Add Product</a>
+        <a href="{% url 'remove_product' %}" class="btn btn-primary">Remove Product</a>
+        <a href="{% url 'view_products' %}" class="btn btn-primary">View Products</a>
+        <a href="{% url 'search_products' %}" class="btn btn-primary">Search Product</a>
+        <a href="{% url 'upload_inventory' %}" class="btn btn-primary">Upload Inventory</a>
+        <a href="{% url 'undo_last_action' %}" class="btn btn-primary">Undo Last Action</a>
+
+        <!-- Logout Form -->
+        <form method="post" action="{% url 'logout' %}" class="logout-form">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary btn-logout">Logout</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

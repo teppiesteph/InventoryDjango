@@ -1,0 +1,26 @@
+{% extends 'inventory/landing_page.html' %}
+
+{% block content %}
+<div class="container shadow-box">
+    <div class="page-header text-center">
+        <h1>About Us</h1>
+        <p>Meet the team behind this Django project!</p>
+    </div>
+
+    <div class="text-center">
+        <ul class="team-list">
+            <li>Stephanie Hurley</li>
+            <li>Kyle Simpson</li>
+            <li>Michael Flicker</li>
+            <li>Nicole Thomas</li>
+            <li>Michael Whitley</li>
+            <li>Edward Batchelor</li>
+        </ul>
+    </div>
+
+    <!-- Back to Dashboard Button -->
+    <div class="form-actions text-center">
+        <a href="{% url 'dashboard' %}" class="btn btn-primary">Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}

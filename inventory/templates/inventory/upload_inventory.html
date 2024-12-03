@@ -1,0 +1,48 @@
+{% extends 'inventory/landing_page.html' %}
+
+{% block content %}
+<div class="container shadow-box">
+    <div class="page-header text-center">
+        <h1>Upload Inventory</h1>
+        <p>Upload a <strong>.txt</strong> file to bulk add products to your inventory.</p>
+    </div>
+
+    <div class="instructions-container">
+        <h2 class="text-center">File Format Instructions</h2>
+        <p>Ensure your file is formatted as follows:</p>
+        <ul class="styled-list">
+            <li>Each line represents one product.</li>
+            <li>Each line should contain the following details, separated by commas:</li>
+            <ul>
+                <li><strong>Product Name</strong></li>
+                <li><strong>Product ID</strong> (unique)</li>
+                <li><strong>Description</strong></li>
+                <li><strong>Amount</strong> (integer)</li>
+                <li><strong>Location</strong></li>
+            </ul>
+            <li>Example of a valid file:</li>
+        </ul>
+        <pre class="example-file">
+Laptop,1001,High-performance laptop,10,Warehouse A
+Mouse,1002,Wireless mouse,50,Warehouse B
+Keyboard,1003,Mechanical keyboard,20,Warehouse C
+        </pre>
+        <p class="alert-info">Note: The file must be in <strong>.txt</strong> format. Other file types are not supported.</p>
+    </div>
+
+    <form method="post" enctype="multipart/form-data" class="form-container">
+        {% csrf_token %}
+        <div class="form-group text-center">
+            <label for="inventory_file" class="form-label">Choose a file:</label>
+            <input type="file" name="inventory_file" id="inventory_file" class="form-input" required>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Upload</button>
+        </div>
+    </form>
+
+    <div class="form-actions">
+        <a href="{% url 'dashboard' %}" class="btn btn-primary">Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,37 +1,208 @@
-/* Style for the landing page */
-.landing-container {
+/* General Page Layout */
+.page-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.main-content {
+    flex: 1; /* Ensures the footer sticks to the bottom of the page */
+}
+
+/* Body Background */
+body {
+    background-color: #f8f9fa;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Page Header Styles */
+.page-header {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
     text-align: center;
-    margin-top: 50px;
 }
 
-.landing-container h1 {
-    font-size: 3em;
+.page-header h1 {
+    font-size: 2.5rem;
     color: #333;
-    margin-bottom: 20px;
+    margin-bottom: 1rem;
 }
 
-.landing-container p {
-    font-size: 1.2em;
+.page-header p {
+    font-size: 1.2rem;
     color: #555;
-    margin-bottom: 30px;
+    margin-bottom: 2rem;
 }
 
-.landing-links a {
-    font-size: 1.2em;
+/* Header Styles */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background-color: #003366;
+    color: #fff;
+}
+
+.logo-img {
+    max-height: 50px;
+}
+
+.nav ul {
+    list-style: none;
+    display: flex;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+}
+
+.nav ul li a {
     text-decoration: none;
-    padding: 10px 20px;
-    margin: 0 10px;
-    border-radius: 5px;
+    color: #fff;
+    font-weight: bold;
+    transition: color 0.3s ease;
 }
 
-.landing-links .btn {
-    background-color: #003366; /* Dark blue */
-    color: rgb(255, 255, 255);
+.nav ul li a:hover {
+    color: #d9d9d9;
+}
+
+/* Footer Styles */
+.footer {
+    background-color: #002244;
+    color: #fff;
+    padding: 1rem;
+    text-align: center;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+
+.footer-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Form Containers */
+.login-container,
+.signup-container {
+    max-width: 400px;
+    margin: 5rem auto;
+    padding: 2rem;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+    background: #fff;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+.form-input {
+    width: 80%;
+    margin: 0 auto;
+    padding: 0.8rem;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    background-color: #f8f9fa;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    display: block;
+}
+
+.form-input:focus {
+    border-color: #003366;
+    box-shadow: 0 0 5px rgba(0, 51, 102, 0.3);
+    outline: none;
+}
+
+.form-actions {
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.btn-primary {
+    display: block;
+    width: 80%;
+    margin: 0 auto;
+    padding: 0.8rem;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #fff;
+    background: #003366;
     border: none;
+    border-radius: 6px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.landing-links .btn:hover {
-    background-color: #002244; /* Darker blue for hover effect */
+.btn-primary:hover {
+    background: #002244;
+    transform: scale(1.02);
+}
+
+.btn-secondary {
+    display: block;
+    width: 80%;
+    margin: 0 auto;
+    padding: 0.8rem;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #fff;
+    background: #0066cc;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-secondary:hover {
+    background: #004999;
+}
+
+/* Additional Links */
+.additional-links p {
+    margin: 1.5rem 0 0;
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.additional-links a {
+    color: #003366;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.additional-links a:hover {
+    color: #002244;
+    text-decoration: underline;
+}
+
+/* Utility Classes */
+.container {
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+.shadow-box {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.text-bold {
+    font-weight: bold;
 }

@@ -1,48 +1,67 @@
-<!-- edit_product.html -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Product</title>
-</head>
-<body>
-    <h1>Edit Product</h1>
+{% extends 'inventory/landing_page.html' %}
+
+{% block content %}
+<div class="container shadow-box wide-container">
+    <!-- Page Header -->
+    <div class="page-header text-center">
+        <h1>Edit Product</h1>
+        <p>Modify the details of an existing product in your inventory.</p>
+    </div>
+
+    <!-- User Info -->
     {% if user.is_authenticated %}
-    <div class="user-info">
-        <p>Signed in as: {{ user.username }}</p>
-        <p>Role: {{ user.groups.first.name }}</p>  <!-- This will work since the user is in only one group -->
+    <div class="user-info text-center">
+        <p><strong>Signed in as:</strong> {{ user.username }}</p>
+        <p><strong>Role:</strong> {{ user.groups.first.name }}</p>
     </div>
     {% endif %}
 
+    <!-- Display Error Messages -->
+    {% if messages %}
+    <div class="form-messages">
+        {% for message in messages %}
+        <div class="alert-error text-center">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
 
-    <a href="{% url 'view_products' %}">Back to Products</a>
-
-    <form method="POST">
+    <!-- Edit Product Form -->
+    <form method="POST" class="form-container">
         {% csrf_token %}
-        
-        <!-- Hidden field to store product_id -->
-        <input type="hidden" name="product_id" value="{{ product.id }}">
 
-        <div>
-            <label for="name">Product Name:</label>
-            <input type="text" id="name" name="name" value="{{ product.name }}" required>
+        <div class="form-group">
+            <label for="name" class="form-label">Product Name:</label>
+            <input type="text" id="name" name="name" class="form-input" value="{{ product.name }}" required>
         </div>
-        <div>
-            <label for="description">Description:</label>
-            <textarea id="description" name="description" required>{{ product.description }}</textarea>
+
+        <div class="form-group">
+            <label for="product_id" class="form-label">Product ID:</label>
+            <input type="text" id="product_id" name="product_id" class="form-input" value="{{ product.product_id }}" required>
         </div>
-        <div>
-            <label for="amount">Amount:</label>
-            <input type="number" id="amount" name="amount" value="{{ product.amount }}" required>
+
+        <div class="form-group">
+            <label for="description" class="form-label">Description:</label>
+            <textarea id="description" name="description" class="form-input" required>{{ product.description }}</textarea>
         </div>
-        <div>
-            <label for="location">Location:</label>
-            <input type="text" id="location" name="location" value="{{ product.location }}" required>
+
+        <div class="form-group">
+            <label for="amount" class="form-label">Amount:</label>
+            <input type="number" id="amount" name="amount" class="form-input" value="{{ product.amount }}" required>
         </div>
-        <div>
-            <button type="submit">Save Changes</button>
+
+        <div class="form-group">
+            <label for="location" class="form-label">Location:</label>
+            <input type="text" id="location" name="location" class="form-input" value="{{ product.location }}" required>
+        </div>
+
+        <div class="form-actions text-center">
+            <button type="submit" class="btn btn-primary">Save Changes</button>
         </div>
     </form>
-</body>
-</html>
+
+    <!-- Back to Products Button -->
+    <div class="form-actions text-center">
+        <a href="{% url 'view_products' %}" class="btn btn-primary">Back to Products</a>
+    </div>
+</div>
+{% endblock %}

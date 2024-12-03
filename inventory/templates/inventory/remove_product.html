@@ -1,30 +1,61 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Remove Product</title>
-</head>
-<body>
-    <h1>Remove Product</h1>
-    {% if user.is_authenticated %}
-    <div class="user-info">
-        <p>Signed in as: {{ user.username }}</p>
-        <p>Role: {{ user.groups.first.name }}</p> 
+{% extends 'inventory/landing_page.html' %}
+
+{% block content %}
+<div class="container shadow-box wide-container">
+    <!-- Page Header -->
+    <div class="page-header text-center">
+        <h1>Remove Product</h1>
+        <p>Select and remove items from your inventory.</p>
     </div>
-    {% endif %}
 
-    <a href="{% url 'dashboard' %}">Back to Dashboard</a>
+    <!-- User Info -->
+    <div class="user-info text-center">
+        <p><strong>Signed in as:</strong> {{ username }}</p>
+        <p><strong>Role:</strong> {{ role }}</p>
+    </div>
 
-    {% if error %}
-    <p style="color: red;">{{ error }}</p>
-    {% endif %}
+    <!-- Products Table -->
+    <div class="table-container">
+        <table class="styled-table">
+            <thead>
+                <tr>
+                    <th class="text-center">Product Name</th>
+                    <th class="text-center">Product ID</th>
+                    <th class="text-center">Description</th>
+                    <th class="text-center">Amount</th>
+                    <th class="text-center">Location</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr>
+                    <td class="text-center">{{ product.name }}</td>
+                    <td class="text-center">{{ product.product_id }}</td>
+                    <td class="text-center">{{ product.description }}</td>
+                    <td class="text-center">{{ product.amount }}</td>
+                    <td class="text-center">{{ product.location }}</td>
+                    <td class="text-center">
+                        <!-- Remove Product Form -->
+                        <form method="post" action="{% url 'remove_product' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="product_id" value="{{ product.product_id }}">
+                            <button type="submit" class="btn btn-secondary btn-small">Remove</button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center">No products available.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
-    <form method="post">
-        {% csrf_token %}
-        <label for="product_id">Enter Product ID to remove:</label>
-        <input type="text" name="product_id" required>
-        <button type="submit">Remove Product</button>
-    </form>
-</body>
-</html>
+    <!-- Back to Dashboard Button -->
+    <div class="form-actions">
+        <a href="{% url 'dashboard' %}" class="btn btn-primary">Back to Dashboard</a>
+    </div>
+</div>
+{% endblock %}

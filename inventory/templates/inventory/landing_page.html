@@ -6,39 +6,32 @@
     <title>Inventory System</title>
 
     {% load static %}
-
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
+    <div class="page-container">
+        <header class="header">
+            <nav class="nav">
+                <ul>
+                    <li><a href="{% url 'login' %}">Login</a></li>
+                    <li><a href="{% url 'signup' %}">Sign Up</a></li>
+                    <li><a href="{% url 'about' %}">About Us</a></li>
+                </ul>
+            </nav>
+        </header>
 
-    <header>
-        <div class="logo">
-         
-        </div>
+        <main class="main-content">
+            {% block header %}
+            {% endblock %}
+            {% block content %}
+            {% endblock %}
+        </main>
 
-        
-        
-    </header>
-
-    <main>
-        <div class="landing-container">
-            <h1>Welcome to the Inventory System</h1>
-            <p>Your go-to solution for managing your inventory. Start by logging in or signing up!</p>
-
-            <div class="landing-links">
-                <a href="{% url 'login' %}" class="btn">Login</a>
-                <a href="{% url 'signup' %}" class="btn">Sign Up</a>
+        <footer class="footer">
+            <div class="footer-container">
+                <p>&copy; 2024 Inventory System. All rights reserved.</p>
             </div>
-        </div>
-    </main>
-
-    {% block content %}
-    {% endblock %}
-
-    <footer>
-        <p>&copy; 2024 Inventory System</p>
-    </footer>
+        </footer>
+    </div>
 </body>
 </html>
-
-
