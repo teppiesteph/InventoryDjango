@@ -14,36 +14,119 @@
 
     <form method="post" class="form-container">
         {% csrf_token %}
-        <!-- Product Name Input -->
-        <div class="form-group">
-            <label for="name" class="form-label">Product Name:</label>
-            <input type="text" id="name" name="name" class="form-input" placeholder="Enter product name" required>
+        <!-- Product Forms Container -->
+        <div id="productForms">
+            <!-- First Product Form -->
+            <div class="product-form" data-index="0">
+                <h3>Product 1</h3>
+                <div class="form-group">
+                    <label for="name_0" class="form-label">Product Name:</label>
+                    <input type="text" id="name_0" name="products[0][name]" class="form-input" placeholder="Enter product name" required>
+                </div>
+                <div class="form-group">
+                    <label for="product_id_0" class="form-label">Product ID:</label>
+                    <input type="text" id="product_id_0" name="products[0][product_id]" class="form-input" placeholder="Enter product ID" required>
+                </div>
+                <div class="form-group">
+                    <label for="description_0" class="form-label">Description:</label>
+                    <input type="text" id="description_0" name="products[0][description]" class="form-input" placeholder="Enter description" required>
+                </div>
+                <div class="form-group">
+                    <label for="amount_0" class="form-label">Amount:</label>
+                    <input type="number" id="amount_0" name="products[0][amount]" class="form-input" placeholder="Enter amount" required>
+                </div>
+                <div class="form-group">
+                    <label for="location_0" class="form-label">Location:</label>
+                    <input type="text" id="location_0" name="products[0][location]" class="form-input" placeholder="Enter location" required>
+                </div>
+            </div>
         </div>
-        <!-- Product ID Input -->
-        <div class="form-group">
-            <label for="product_id" class="form-label">Product ID:</label>
-            <input type="text" id="product_id" name="product_id" class="form-input" placeholder="Enter product ID" required>
-        </div>
-        <!-- Description Input -->
-        <div class="form-group">
-            <label for="description" class="form-label">Description:</label>
-            <input type="text" id="description" name="description" class="form-input" placeholder="Enter description" required>
-        </div>
-        <!-- Amount Input -->
-        <div class="form-group">
-            <label for="amount" class="form-label">Amount:</label>
-            <input type="number" id="amount" name="amount" class="form-input" placeholder="Enter amount" required>
-        </div>
-        <!-- Location Input -->
-        <div class="form-group">
-            <label for="location" class="form-label">Location:</label>
-            <input type="text" id="location" name="location" class="form-input" placeholder="Enter location" required>
-        </div>
-        <!-- Submit and Back Buttons -->
+
+        <!-- Add Another Product Button -->
         <div class="form-actions">
-            <button type="submit" class="btn btn-primary">Add Product</button>
+            <button type="button" class="btn btn-secondary" onclick="addProductForm()">Add Another Product</button>
+            <button type="submit" class="btn btn-primary">Submit</button>
             <a href="{% url 'dashboard' %}" class="btn btn-primary">Back to Dashboard</a>
         </div>
     </form>
 </div>
+
+<style>
+    .product-form {
+        border: 2px solid #ccc;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        padding: 15px;
+        background-color: #f9f9f9;
+    }
+    .product-form h3 {
+        margin-top: 0;
+        color: #333;
+        text-align: center;
+        background-color: #00336c;
+        color: white;
+        padding: 5px 0;
+        border-radius: 4px;
+    }
+    .form-group {
+        margin-bottom: 10px;
+    }
+    .form-label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+    .form-input {
+        width: calc(100% - 20px);
+        max-width: 300px;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+    }
+    .form-container {
+        max-width: 800px;
+        margin: auto;
+    }
+    .form-actions {
+        text-align: center;
+        margin-top: 20px;
+    }
+</style>
+
+<script>
+    let productCount = 1;
+
+    function addProductForm() {
+    // Find the existing form container
+    var container = document.getElementById("productForms");
+
+    // Clone the first product form
+    var newForm = container.firstElementChild.cloneNode(true);
+
+    // Update the form's data-index
+    newForm.setAttribute("data-index", productCount);
+
+    // Update the heading of the cloned form
+    var heading = newForm.querySelector("h3");
+    heading.textContent = "Product " + (productCount + 1);
+
+    // Update all input fields with unique names and IDs
+    var inputs = newForm.getElementsByTagName("input");
+    for (var i = 0; i < inputs.length; i++) {
+        var input = inputs[i];
+        var baseName = input.getAttribute("name").match(/\[.*\]\[(.*)\]/)[1]; // Extract base name (e.g., "name", "product_id")
+        input.setAttribute("name", `products[${productCount}][${baseName}]`);
+        input.setAttribute("id", `${baseName}_${productCount}`);
+        input.value = ""; // Clear the input value
+    }
+
+    // Append the new form below the existing ones
+    container.appendChild(newForm);
+
+    // Increment product count
+    productCount++;
+}
+
+</script>
 {% endblock %}

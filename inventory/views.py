@@ -12,6 +12,11 @@ from .models import Product, History
 from .forms import CustomSignupForm
 from django.contrib.messages import get_messages
 import json
+import re
+from datetime import timedelta
+from uuid import uuid4
+
+
 
 
 # Helper functions to check user roles
@@ -92,32 +97,70 @@ def signup(request):
 @user_passes_test(is_manager, login_url="dashboard")
 def add_product(request):
     if request.method == "POST":
-        name = request.POST["name"]
-        product_id = request.POST["product_id"]
-        description = request.POST["description"]
-        amount = request.POST["amount"]
-        location = request.POST["location"]
+        print(request.POST)  # Debugging: Check incoming POST data
 
-        if Product.objects.filter(product_id=product_id).exists():
-            messages.error(request, f"Product ID '{product_id}' already exists.")
-            return redirect("add_product")
+        products = {}
+        for key, value in request.POST.items():
+            if key.startswith("products"):
+                # Extract index and field name using regex
+                match = re.match(r"products\[(\d+)\]\[(\w+)\]", key)
+                if match:
+                    index, field_name = match.groups()
+                    index = int(index)
+                    if index not in products:
+                        products[index] = {}
+                    products[index][field_name] = value
 
-        product = Product.objects.create(
-            name=name, product_id=product_id, description=description, amount=amount, location=location
-        )
-        History.objects.create(
-            user=request.user,
-            action_type="add",
-            product_name=name,
-            product_id=product_id,
-            description=description,
-            amount=amount,
-            location=location,
-        )
-        messages.success(request, f"Product '{name}' added successfully.")
+        print("Parsed Products:", products)  # Debugging: Check parsed product data
+
+        # Validation and saving products
+        with transaction.atomic():
+            for index, product_data in products.items():
+                # Ensure all required fields are present
+                name = product_data.get("name")
+                product_id = product_data.get("product_id")
+                description = product_data.get("description", "")
+                amount = product_data.get("amount")
+                location = product_data.get("location", "")
+
+                if not name or not product_id or not amount:  # Basic validation
+                    messages.error(request, "All required fields (Name, Product ID, Amount) must be filled.")
+                    continue
+
+                # Check for duplicate product ID
+                if Product.objects.filter(product_id=product_id).exists():
+                    messages.error(request, f"Product ID '{product_id}' already exists.")
+                    continue
+
+                # Save the product
+                try:
+                    product = Product.objects.create(
+                        name=name,
+                        product_id=product_id,
+                        description=description,
+                        amount=int(amount),
+                        location=location,
+                    )
+                    print(f"Product added: {product}")  # Debugging: Confirm saving
+                    # Log the addition in History
+                    History.objects.create(
+                        user=request.user,
+                        action_type="add",
+                        product_name=name,
+                        product_id=product_id,
+                        description=description,
+                        amount=amount,
+                        location=location,
+                    )
+                except Exception as e:
+                    print(f"Error saving product: {e}")  # Debugging: Catch save errors
+                    messages.error(request, f"Error saving product '{name}': {e}")
+                    continue
+
+        messages.success(request, "Products added successfully.")
         return redirect("dashboard")
-    return render(request, "inventory/add_product.html")
 
+    return render(request, "inventory/add_product.html")
 
 # Remove product view
 @login_required
@@ -183,6 +226,7 @@ def edit_product(request, product_id):
 
 
 # Upload inventory view
+
 @login_required
 @user_passes_test(is_manager, login_url="dashboard")
 def upload_inventory(request):
@@ -191,6 +235,8 @@ def upload_inventory(request):
         if not uploaded_file.name.endswith(".txt"):
             messages.error(request, "Only .txt files are supported.")
             return redirect("dashboard")
+
+        bulk_id = uuid4()  # Generate a unique ID for this bulk upload
 
         try:
             decoded_file = uploaded_file.read().decode("utf-8").splitlines()
@@ -207,9 +253,18 @@ def upload_inventory(request):
                             "location": location.strip(),
                         },
                     )
-                    if not created:
-                        product.amount += amount
-                        product.save()
+                    if created:
+                        # Log this addition in History
+                        History.objects.create(
+                            user=request.user,
+                            action_type="add",
+                            product_name=name.strip(),
+                            product_id=product_id.strip(),
+                            description=description.strip(),
+                            amount=amount,
+                            location=location.strip(),
+                            bulk_id=bulk_id,  # Assign the bulk ID
+                        )
             messages.success(request, "Inventory uploaded and updated successfully.")
         except Exception as e:
             messages.error(request, f"Error processing file: {e}")
@@ -221,31 +276,54 @@ def upload_inventory(request):
 @login_required
 @user_passes_test(is_manager, login_url="dashboard")
 def undo_last_action(request):
+    # Fetch the latest action
     last_action = History.objects.filter(user=request.user).order_by("-timestamp").first()
     if not last_action:
         messages.error(request, "No actions to undo.")
         return redirect("dashboard")
 
     if last_action.action_type == "add":
-        Product.objects.filter(product_id=last_action.product_id).delete()
+        if last_action.bulk_id:
+            # Handle bulk upload
+            bulk_actions = History.objects.filter(bulk_id=last_action.bulk_id)
+            product_ids = bulk_actions.values_list("product_id", flat=True)
+
+            # Delete all products associated with the bulk upload
+            Product.objects.filter(product_id__in=product_ids).delete()
+
+            # Delete bulk actions from History
+            bulk_actions.delete()
+            messages.success(request, "Bulk upload undone successfully.")
+        else:
+            # Handle single product addition
+            Product.objects.filter(product_id=last_action.product_id).delete()
+            last_action.delete()
+            messages.success(request, f"Product '{last_action.product_name}' removed successfully.")
+
     elif last_action.action_type == "remove":
-        Product.objects.create(
-            name=last_action.product_name,
-            product_id=last_action.product_id,
-            description=last_action.description,
-            amount=last_action.amount,
-            location=last_action.location,
-        )
+        # Recreate the product if it doesn't already exist
+        if not Product.objects.filter(product_id=last_action.product_id).exists():
+            Product.objects.create(
+                name=last_action.product_name,
+                product_id=last_action.product_id,
+                description=last_action.description,
+                amount=last_action.amount,
+                location=last_action.location,
+            )
+        last_action.delete()
+        messages.success(request, f"Product '{last_action.product_name}' restored successfully.")
+
     elif last_action.action_type == "edit":
+        # Revert product to its previous state
         product = Product.objects.get(product_id=last_action.product_id)
         product.name = last_action.product_name
         product.description = last_action.description
         product.amount = last_action.amount
         product.location = last_action.location
         product.save()
+        last_action.delete()
+        messages.success(request, f"Changes to '{last_action.product_name}' undone successfully.")
 
-    last_action.delete()
-    messages.success(request, "Last action undone successfully.")
     return redirect("dashboard")
 
 
@@ -269,5 +347,9 @@ def search_products(request):
 def limit_history(sender, instance, **kwargs):
     history_count = History.objects.filter(user=instance.user).count()
     if history_count > 10:
+        # Get IDs of the excess actions
         excess_actions = History.objects.filter(user=instance.user).order_by("timestamp")[: history_count - 10]
-        excess_actions.delete()
+        excess_action_ids = excess_actions.values_list("id", flat=True)
+        
+        # Delete them explicitly
+        History.objects.filter(id__in=excess_action_ids).delete()

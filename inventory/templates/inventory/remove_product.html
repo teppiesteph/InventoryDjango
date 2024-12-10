@@ -10,8 +10,17 @@
 
     <!-- User Info -->
     <div class="user-info text-center">
-        <p><strong>Signed in as:</strong> {{ username }}</p>
-        <p><strong>Role:</strong> {{ role }}</p>
+        <p><strong>Signed in as:</strong> {{ request.user.username }}</p>
+        <p><strong>Role:</strong> {{ request.user.groups.first.name }}</p>
+    </div>
+
+    <!-- Success/Error Messages -->
+    <div class="messages text-center">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
     </div>
 
     <!-- Products Table -->
@@ -40,7 +49,7 @@
                         <form method="post" action="{% url 'remove_product' %}">
                             {% csrf_token %}
                             <input type="hidden" name="product_id" value="{{ product.product_id }}">
-                            <button type="submit" class="btn btn-secondary btn-small">Remove</button>
+                            <button type="submit" class="btn btn-danger btn-small">Remove</button>
                         </form>
                     </td>
                 </tr>

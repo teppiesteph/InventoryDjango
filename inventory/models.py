@@ -24,20 +24,21 @@ class Profile(models.Model):
 
 
 class History(models.Model):
-    ACTION_CHOICES = [
+    ACTION_TYPES = [
         ("add", "Add"),
         ("remove", "Remove"),
         ("edit", "Edit"),
     ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    action_type = models.CharField(max_length=10, choices=ACTION_CHOICES)
-    product_name = models.CharField(max_length=100)
-    product_id = models.CharField(max_length=50)
-    description = models.TextField(blank=True, null=True)
-    amount = models.PositiveIntegerField(blank=True, null=True)
-    location = models.CharField(max_length=100, blank=True, null=True)
+    action_type = models.CharField(max_length=10, choices=ACTION_TYPES)  # e.g., "add", "remove"
+    product_name = models.CharField(max_length=100, null=True, blank=True)
+    product_id = models.CharField(max_length=50, null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
+    amount = models.IntegerField(null=True, blank=True)
+    location = models.CharField(max_length=100, null=True, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
+    bulk_id = models.UUIDField(null=True, blank=True)  # Unique identifier for bulk actions
 
     def __str__(self):
-        return f"{self.action_type.capitalize()} - {self.product_name} by {self.user.username}"
+        return f"{self.action_type} - {self.product_name or 'Unknown'} ({self.timestamp})"
